@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MARKETRA | Online Store</title>
+<style>
+:root{--orange:#155eef;--black:#171717;--white:#fff;--bg:#f5f5f5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--black)}
+header{background:var(--orange);color:white;padding:14px 5%;display:flex;align-items:center;gap:20px;justify-content:space-between;position:sticky;top:0;z-index:10}
+.logo{font-size:25px;font-weight:900;letter-spacing:2px;white-space:nowrap}
+.search{display:flex;flex:1;max-width:650px}
+.search input{width:100%;padding:13px;border:0;border-radius:5px 0 0 5px;font-size:15px}
+.search button{border:0;background:var(--black);color:white;padding:0 17px;border-radius:0 5px 5px 0}
+.cartBtn{background:var(--black);color:white;border:0;padding:12px 17px;border-radius:5px;cursor:pointer}
+nav{background:white;padding:12px 5%;display:flex;gap:24px;overflow:auto;white-space:nowrap}
+nav a{color:#333;text-decoration:none;font-size:13px}
+.banner{background:var(--black);color:white;padding:25px 5%;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.banner h1{font-size:clamp(24px,4vw,38px);margin:0 0 8px}
+.banner p{color:#ddd;margin:0}
+.banner strong{color:var(--orange)}
+main{max-width:1250px;margin:25px auto;padding:0 15px}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+h2{font-size:21px;margin:0}
+.toolbar select{padding:10px;border:1px solid #ddd;border-radius:5px}
+.categories{display:flex;gap:9px;overflow:auto;padding:5px 0 18px}
+.category{white-space:nowrap;background:white;border:1px solid #ddd;padding:10px 14px;border-radius:20px;cursor:pointer}
+.category.active,.category:hover{background:var(--orange);border-color:var(--orange);color:white}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:14px}
+.product{background:white;border:1px solid #e5e5e5;border-radius:7px;overflow:hidden;cursor:pointer;transition:.2s}
+.product:hover{transform:translateY(-3px);box-shadow:0 5px 15px #0002}
+.product-art{height:185px;background:#fff;display:flex;align-items:center;justify-content:center;padding:12px}
+.product-art svg{width:100%;height:100%}
+.product-art img{width:100%;height:100%;object-fit:contain}
+.product-info{padding:12px}
+.product-info h3{font-size:14px;font-weight:500;min-height:35px;margin:0 0 8px}
+.price{font-size:19px;color:var(--orange);font-weight:bold}
+.product-info small{color:#777;font-size:11px}
+.details{display:none;position:fixed;inset:0;background:#0009;z-index:30;align-items:center;justify-content:center;padding:15px}
+.details.show{display:flex}
+.detail-box{background:white;width:100%;max-width:850px;max-height:92vh;overflow:auto;border-radius:10px;position:relative}
+.close{position:absolute;right:15px;top:12px;border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:20px;cursor:pointer;z-index:2}
+.detail-layout{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:25px}
+.detail-image{min-height:290px;background:#f5f5f5;border-radius:8px;display:grid;place-items:center;padding:15px}
+.detail-image svg{width:100%;height:270px}
+.detail-image img{width:100%;height:270px;object-fit:contain}
+.detail-info{padding:20px 5px}
+.detail-info h2{font-size:24px;margin:12px 0}
+.detail-price{font-size:26px;color:var(--orange);font-weight:bold;margin:12px 0}
+.detail-info label{display:block;font-weight:bold;font-size:13px;margin:17px 0 8px}
+.colours{display:flex;gap:10px;flex-wrap:wrap}
+.swatch{width:34px;height:34px;border-radius:50%;border:2px solid #ddd;cursor:pointer;position:relative}
+.swatch.selected{outline:2px solid var(--orange);outline-offset:2px}
+.colour-name{font-size:12px;color:#666;margin-top:7px}
+.qty{display:flex;align-items:center;gap:12px}
+.qty button{width:34px;height:34px;border:1px solid #ddd;background:white;border-radius:5px;cursor:pointer;font-size:18px}
+.qty span{font-weight:bold}
+.primary{background:var(--orange);color:white;border:0;padding:14px 20px;border-radius:5px;width:100%;font-weight:bold;cursor:pointer;margin-top:18px}
+.secondary{background:var(--black);color:white;border:0;padding:12px 18px;border-radius:5px;cursor:pointer}
+.upload-input{display:block;width:100%;max-width:250px;font-size:12px;padding:8px;border:1px solid #ddd;border-radius:5px;background:#fafafa}
+#cart{background:white;margin:35px 0;padding:22px;border-radius:8px}
+.cartrow{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid #eee;padding:13px 0;font-size:13px}
+.remove{background:#eee;border:0;padding:7px;border-radius:4px;cursor:pointer}
+.checkout{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:15px}
+.checkout input{padding:12px;border:1px solid #ddd;border-radius:5px;width:100%}
+.whatsapp{width:100%;padding:15px;background:#168b55;color:white;border:0;border-radius:5px;margin-top:16px;font-weight:bold;cursor:pointer}
+footer{background:var(--black);color:white;text-align:center;padding:28px;margin-top:40px}
+@media(max-width:600px){
+ header{padding:12px;gap:8px;flex-wrap:wrap}
+ .logo{font-size:19px}
+ .search{order:3;flex-basis:100%;max-width:none}
+ .banner{padding:24px 18px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .product-art{height:140px}
+ .product-info{padding:9px}
+ .detail-layout{grid-template-columns:1fr;padding:15px}
+ .detail-image{min-height:210px}
+ .detail-image svg,.detail-image img{height:200px}
+ .detail-info{padding:5px}
+}
+</style>
+</head>
+<body>
+
+<header>
+ <div class="logo">M A R K E T R A</div>
+ <div class="search">
+  <input id="search" placeholder="Search products..." oninput="renderProducts()">
+  <button onclick="renderProducts()">⌕</button>
+ </div>
+ <button class="cartBtn" onclick="document.getElementById('cart').scrollIntoView({behavior:'smooth'})">🛒 <span id="cartCount">0</span></button>
+</header>
+
+<nav>
+ <a href="#">Home</a><a href="#categories">Categories</a><a href="#shop">Products</a><a href="#cart">Cart</a>
+</nav>
+
+<section class="banner">
+ <div>
+  <h1>Welcome to <strong>MARKETRA</strong></h1>
+  <p>Smart Accessories. Better Lifestyle.</p>
+ </div>
+ <div style="font-size:42px">🛍️</div>
+</section>
+
+<main>
+ <div class="toolbar" id="categories">
+  <h2>Shop by Category</h2>
+ </div>
+ <div class="categories" id="categoryList"></div>
+
+ <div class="toolbar" id="shop">
+  <h2 id="heading">All Products</h2>
+  <select id="sort" onchange="renderProducts()">
+   <option value="0">Recommended</option>
+   <option value="1">Price: Low to High</option>
+   <option value="2">Price: High to Low</option>
+  </select>
+ </div>
+ <div class="grid" id="productGrid"></div>
+
+ <section id="cart">
+  <h2>Shopping Cart</h2>
+  <div id="cartItems">Your cart is empty.</div>
+  <h3 id="total">Estimated Total: Rs. 0</h3>
+  <h3>Delivery Details</h3>
+  <div class="checkout">
+   <input id="customerName" placeholder="Customer Name">
+   <input id="customerPhone" placeholder="Phone Number">
+   <input id="customerCity" placeholder="City">
+   <input id="customerAddress" placeholder="Delivery Address">
+   <input id="storeWhatsApp" placeholder="Store WhatsApp: 923XXXXXXXXX">
+  </div>
+  <button class="whatsapp" onclick="sendOrder()">PLACE ORDER ON WHATSAPP</button>
+ </section>
+</main>
+
+<div class="details" id="details">
+ <div class="detail-box">
+  <button class="close" onclick="closeDetails()">×</button>
+  <div class="detail-layout">
+   <div class="detail-image" id="detailImage"></div>
+   <div class="detail-info">
+    <small id="detailCategory"></small>
+    <h2 id="detailName"></h2>
+    <div class="detail-price" id="detailPrice"></div>
+    <p style="color:#777;font-size:13px">Illustrative product design. Actual product model and availability will be confirmed before order.</p>
+
+    <label>Upload Product Picture</label>
+    <input class="upload-input" type="file" accept="image/*" onchange="uploadProductPicture(event)">
+
+    <label>Select Colour</label>
+    <div class="colours" id="colourOptions"></div>
+    <div class="colour-name" id="selectedColour"></div>
+    <label>Model / Variant</label>
+    <div id="detailVariant"></div>
+    <label>Quantity</label>
+    <div class="qty">
+     <button onclick="changeQty(-1)">−</button>
+     <span id="quantity">1</span>
+     <button onclick="changeQty(1)">+</button>
+    </div>
+    <button class="primary" onclick="addToCart()">ADD TO CART</button>
+   </div>
+  </div>
+ </div>
+</div>
+
+<footer>
+ <div class="logo" style="color:white">M A R K E T R A</div>
+ <p>Smart Accessories. Better Lifestyle.</p>
+ <small>© 2026 MARKETRA</small>
+</footer>
+
+<script>
+const categories=[
+"All","Wireless Earbuds","Power Banks","Fast Chargers","Charging Cables",
+"Smart Watches","Bluetooth Speakers","Mobile Holders","Bluetooth Headphones",
+"Ring Lights & Tripods","AirPods Ear Clips & Accessories","Mini & Miscellaneous Gadgets"
+];
+
+const products=[
+["Wireless Earbuds","M10 TWS Earbuds",999,"earbuds","Black,White","Standard"],
+["Wireless Earbuds","Pro 2 Earbuds",1400,"earbuds","Black,White","Standard"],
+["Wireless Earbuds","Pro 4 Earbuds",1449,"earbuds","Black,White","Standard"],
+["Wireless Earbuds","Premium Wireless Earbuds",4899,"earbuds","Black","Premium"],
+["Power Banks","5,000 mAh Power Bank",1699,"power","Black,White","5000 mAh"],
+["Power Banks","10,000 mAh Power Bank",2999,"power","Black,White","10000 mAh"],
+["Power Banks","15,000 mAh Power Bank",3500,"power","Black,White","15000 mAh"],
+["Power Banks","20,000 mAh Power Bank",4499,"power","Black,White","20000 mAh"],
+["Power Banks","25,000 mAh Power Bank",5499,"power","Black","25000 mAh"],
+["Fast Chargers","10W USB Charger",1000,"charger","White,Black","10W"],
+["Fast Chargers","20W Fast Charger",1800,"charger","White,Black","20W"],
+["Fast Chargers","25W Fast Charger",2200,"charger","White,Black","25W"],
+["Fast Chargers","33W Fast Charger",3000,"charger","White,Black","33W"],
+["Fast Chargers","45W Fast Charger",4000,"charger","White,Black","45W"],
+["Fast Chargers","65W Fast Charger",5500,"charger","White,Black","65W"],
+["Charging Cables","USB-A to Type-C Cable",399,"cable","Black,White","1 metre"],
+["Charging Cables","USB-C to USB-C Cable",999,"cable","Black,White","60W / 100W"],
+["Charging Cables","USB-A to Lightning Cable",599,"cable","White,Black","1 metre"],
+["Charging Cables","USB-C to Lightning Cable",999,"cable","White,Black","1 metre"],
+["Charging Cables","Micro USB Cable",399,"cable","Black,White","1 metre"],
+["Charging Cables","3-in-1 Charging Cable",499,"cable","Black,White","3-in-1"],
+["Charging Cables","Magnetic Charging Cable",699,"cable","Black","Magnetic"],
+["Smart Watches","Budget Smart Watch",3500,"watch","Black,Pink,Silver","Standard"],
+["Smart Watches","Calling Smart Watch",6500,"watch","Black,Silver","Calling"],
+["Smart Watches","Better Quality Smart Watch",10500,"watch","Black,Silver","Standard"],
+["Smart Watches","Redmi Watch 5 Active",14999,"watch","Black,Silver","Watch 5 Active"],
+["Bluetooth Speakers","Mini Bluetooth Speaker",1200,"speaker","Black,Blue,Red","Mini"],
+["Bluetooth Speakers","Portable Bluetooth Speaker",2500,"speaker","Black,Blue","Standard"],
+["Bluetooth Speakers","Bass Bluetooth Speaker",4500,"speaker","Black,Blue","Bass"],
+["Bluetooth Speakers","Large Party Speaker",7500,"speaker","Black","Large"],
+["Bluetooth Speakers","Branded Bluetooth Speaker",9500,"speaker","Black","Standard"],
+["Mobile Holders","Simple Mobile Stand",399,"holder","Black,White","Standard"],
+["Mobile Holders","Foldable Mobile Stand",699,"holder","Black,Silver","Foldable"],
+["Mobile Holders","Adjustable Desktop Holder",999,"holder","Black,Silver","Adjustable"],
+["Mobile Holders","Aluminium Mobile Holder",1499,"holder","Black,Silver","Aluminium"],
+["Mobile Holders","Car Mobile Holder",799,"holder","Black","Dashboard"],
+["Mobile Holders","Magnetic Car Holder",1299,"holder","Black","Magnetic"],
+["Mobile Holders","Bike Mobile Holder",1599,"holder","Black","Bike"],
+["Mobile Holders","Mobile & Tablet Holder",1799,"holder","Black,Silver","Universal"],
+["Bluetooth Headphones","Budget Bluetooth Headphones",1200,"headphones","Black,White","Standard"],
+["Bluetooth Headphones","Foldable Bluetooth Headphones",2500,"headphones","Black,Blue","Foldable"],
+["Bluetooth Headphones","Over-Ear Headphones",4500,"headphones","Black,White","Over-Ear"],
+["Bluetooth Headphones","Gaming Bluetooth Headphones",5500,"headphones","Black,Blue","Gaming"],
+["Bluetooth Headphones","Premium Headphones",12000,"headphones","Black","Premium"],
+["Bluetooth Headphones","Bluetooth Neckband",1800,"headphones","Black,Blue","Neckband"],
+["Ring Lights & Tripods","Mini Selfie Ring Light",500,"ring","Black,White","Mini"],
+["Ring Lights & Tripods","10-inch Ring Light with Tripod",2200,"ring","Black","10 inch"],
+["Ring Lights & Tripods","14-inch Ring Light",2800,"ring","Black","14 inch"],
+["Ring Lights & Tripods","18-inch Professional Ring Light",5500,"ring","Black","18 inch"],
+["Ring Lights & Tripods","Mobile / Camera Tripod",1800,"tripod","Black","Tripod"],
+["Ring Lights & Tripods","Selfie Stick Tripod",2000,"tripod","Black","Selfie tripod"],
+["AirPods Ear Clips & Accessories","Silicone Ear Hooks / Clips",250,"earhooks","Black,White,Clear","Pair"],
+["AirPods Ear Clips & Accessories","Silicone Protective Covers",350,"earhooks","Black,White,Blue","Cover"],
+["AirPods Ear Clips & Accessories","Replacement Silicone Ear Tips",250,"earhooks","White,Black","S M L"],
+["AirPods Ear Clips & Accessories","Anti-Lost Earbuds Strap",300,"earhooks","White,Black","Universal"],
+["Mini & Miscellaneous Gadgets","USB OTG Adapter",150,"otg","Black,Silver","USB"],
+["Mini & Miscellaneous Gadgets","Type-C OTG Adapter",200,"otg","Black,Silver","Type-C"],
+["Mini & Miscellaneous Gadgets","Mobile Pop Socket / Grip",200,"grip","Black,White,Pink","Standard"],
+["Mini & Miscellaneous Gadgets","Cable Protector",100,"cable","Mixed","Set"],
+["Mini & Miscellaneous Gadgets","Cable Organizer Clips",150,"cable","Black,White","Set"],
+["Mini & Miscellaneous Gadgets","USB Mini LED Light",200,"light","White","USB"],
+["Mini & Miscellaneous Gadgets","Gaming Finger Sleeves",150,"earhooks","Black,Grey","Pair"],
+["Mini & Miscellaneous Gadgets","Mobile Dust Plugs",100,"otg","Mixed","Set"],
+["Mini & Miscellaneous Gadgets","SIM Adapter Kit",150,"otg","White","Kit"],
+["Mini & Miscellaneous Gadgets","AUX Audio Adapter",250,"cable","Black","Standard"],
+["Mini & Miscellaneous Gadgets","USB Card Reader",300,"otg","Black","USB"],
+["Mini & Miscellaneous Gadgets","Mini USB Phone Fan",350,"fan","White,Blue","USB"],
+["Mini & Miscellaneous Gadgets","Mobile Cleaning Kit",350,"clean","Mixed","Kit"],
+["Mini & Miscellaneous Gadgets","Charging Port Dust Cover",100,"otg","Mixed","Set"]
+].map((p,i)=>({id:i+1,cat:p[0],name:p[1],price:p[2],type:p[3],colours:p[4].split(","),variant:p[5]}));
+
+/* Load previously uploaded pictures */
+products.forEach(p=>{
+ try{
+  const saved=localStorage.getItem("marketra_image_"+p.id);
+  if(saved)p.customImage=saved;
+ }catch(error){}
+});
+
+const colourCodes={Black:"#171717",White:"#ffffff",Silver:"#b9bdc3",Pink:"#efb6ca",Blue:"#2777d5",Red:"#e34242",Clear:"#e9edf0",Grey:"#858585",Mixed:"#f1a52a"};
+let activeCategory="All",selectedProduct=null,selectedColor="",quantity=1,cart=[];
+
+function svgProduct(p,color){
+ let c=colourCodes[color]||"#155eef";
+ let common=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+ <rect width="400" height="300" rx="18" fill="#fafafa"/>`;
+ let art="";
+ switch(p.type){
+ case "earbuds":art=`<rect x="100" y="80" width="200" height="145" rx="30" fill="${c}" stroke="#aaa" stroke-width="3"/><path d="M150 105 Q120 50 100 105 L100 160 Q100 175 118 175 Q135 175 135 158 L135 120 Q145 110 150 130 L150 155 Q150 170 165 170 Q180 170 180 155 L180 115 Q190 80 210 110 L210 155 Q210 170 225 170 Q240 170 240 155 L240 115 Q260 80 280 110 L280 155 Q280 170 295 170" fill="none" stroke="${c}" stroke-width="17" stroke-linecap="round"/><circle cx="200" cy="195" r="7" fill="#155eef"/>`;break;
+ case "power":art=`<rect x="105" y="35" width="190" height="235" rx="25" fill="${c}" stroke="#aaa" stroke-width="4"/><rect x="170" y="48" width="60" height="8" rx="4" fill="#888"/><rect x="160" y="100" width="80" height="25" rx="8" fill="#555"/><text x="200" y="180" text-anchor="middle" fill="${color==="White"?"#333":"white"}" font-size="25">POWER</text><circle cx="200" cy="225" r="7" fill="#155eef"/>`;break;
+ case "charger":art=`<rect x="110" y="75" width="180" height="150" rx="24" fill="${c}" stroke="#aaa" stroke-width="4"/><rect x="155" y="50" width="16" height="40" rx="4" fill="#999"/><rect x="230" y="50" width="16" height="40" rx="4" fill="#999"/><rect x="175" y="130" width="50" height="30" rx="5" fill="#333"/><text x="200" y="195" text-anchor="middle" fill="${color==="White"?"#333":"white"}" font-size="17">FAST</text>`;break;
+ case "cable":art=`<path d="M85 150 C85 35 315 35 315 150 C315 260 85 260 85 150" fill="none" stroke="${c}" stroke-width="15"/><rect x="65" y="130" width="38" height="40" rx="6" fill="#888"/><rect x="298" y="130" width="40" height="40" rx="6" fill="#888"/><rect x="73" y="141" width="18" height="18" fill="#ddd"/><rect x="307" y="141" width="20" height="18" fill="#ddd"/>`;break;
+ case "watch":art=`<path d="M165 25 L235 25 L245 100 L155 100Z M155 200 L245 200 L235 280 L165 280Z" fill="${c}"/><rect x="115" y="80" width="170" height="145" rx="32" fill="${c}" stroke="#777" stroke-width="4"/><rect x="135" y="100" width="130" height="105" rx="20" fill="#222"/><circle cx="200" cy="152" r="37" fill="none" stroke="#155eef" stroke-width="5"/><path d="M200 152 L200 125 M200 152 L220 165" stroke="white" stroke-width="4"/>`;break;
+ case "speaker":art=`<rect x="115" y="35" width="170" height="230" rx="40" fill="${c}" stroke="#888" stroke-width="4"/><circle cx="200" cy="105" r="42" fill="#333"/><circle cx="200" cy="105" r="24" fill="#777"/><circle cx="200" cy="205" r="42" fill="#333"/><circle cx="200" cy="205" r="24" fill="#777"/>`;break;
+ case "holder":art=`<path d="M125 95 L275 95 L250 190 L150 190Z" fill="${c}" stroke="#888" stroke-width="4"/><path d="M200 190 L200 245 M145 245 L255 245" stroke="#888" stroke-width="13" stroke-linecap="round"/><rect x="135" y="60" width="130" height="20" rx="7" fill="#777"/>`;break;
+ case "headphones":art=`<path d="M95 165 V125 A105 105 0 0 1 305 125 V165" fill="none" stroke="${c}" stroke-width="24"/><rect x="75" y="140" width="65" height="110" rx="22" fill="${c}" stroke="#888" stroke-width="4"/><rect x="260" y="140" width="65" height="110" rx="22" fill="${c}" stroke="#888" stroke-width="4"/>`;break;
+ case "ring":art=`<circle cx="200" cy="115" r="85" fill="none" stroke="${c}" stroke-width="20"/><circle cx="200" cy="115" r="65" fill="none" stroke="#155eef" stroke-width="5"/><path d="M200 200 L200 270 M130 270 L270 270" stroke="#777" stroke-width="10" stroke-linecap="round"/>`;break;
+ case "tripod":art=`<rect x="155" y="30" width="90" height="65" rx="8" fill="${c}" stroke="#888" stroke-width="4"/><path d="M200 95 L200 155 M200 155 L115 275 M200 155 L285 275 M200 155 L200 275" stroke="#777" stroke-width="12" stroke-linecap="round"/>`;break;
+ case "earhooks":art=`<path d="M140 80 C60 50 70 220 155 210 C190 205 180 150 160 145" fill="none" stroke="${c}" stroke-width="24" stroke-linecap="round"/><path d="M260 80 C340 50 330 220 245 210 C210 205 220 150 240 145" fill="none" stroke="${c}" stroke-width="24" stroke-linecap="round"/>`;break;
+ case "otg":art=`<rect x="105" y="100" width="190" height="100" rx="17" fill="${c}" stroke="#777" stroke-width="4"/><rect x="70" y="130" width="40" height="40" rx="5" fill="#aaa"/><rect x="290" y="130" width="40" height="40" rx="5" fill="#aaa"/><rect x="180" y="130" width="40" height="40" fill="#333"/>`;break;
+ case "grip":art=`<circle cx="200" cy="145" r="85" fill="${c}" stroke="#999" stroke-width="5"/><circle cx="200" cy="145" r="55" fill="none" stroke="#999" stroke-width="6"/><circle cx="200" cy="145" r="15" fill="#155eef"/>`;break;
+ case "light":art=`<rect x="150" y="50" width="100" height="150" rx="12" fill="${c}" stroke="#aaa" stroke-width="4"/><circle cx="200" cy="115" r="35" fill="#fff6ba" stroke="#e5b431" stroke-width="7"/><path d="M175 200 L165 255 M225 200 L235 255" stroke="#777" stroke-width="9"/>`;break;
+ case "fan":art=`<circle cx="200" cy="130" r="95" fill="${c}" stroke="#888" stroke-width="6"/><circle cx="200" cy="130" r="18" fill="#888"/><path d="M200 130 Q160 35 200 55 Q245 75 200 130 M200 130 Q295 110 270 155 Q250 195 200 130 M200 130 Q170 235 135 195 Q115 160 200 130" fill="#888"/>`;break;
+ case "clean":art=`<rect x="95" y="65" width="85" height="170" rx="18" fill="${c}" stroke="#888" stroke-width="4"/><rect x="205" y="90" width="100" height="135" rx="12" fill="#ddd" stroke="#888" stroke-width="4"/><path d="M220 90 L290 90 M245 65 L270 65" stroke="#888" stroke-width="8"/>`;break;
+ }
+ return common+art+`<text x="200" y="292" text-anchor="middle" font-size="11" fill="#777">${p.name.replace(/&/g,"and").slice(0,40)}</text></svg>`;
+}
+
+function draw(p,color){
+ if(p.customImage){
+  return `<img src="${p.customImage}" alt="${p.name}">`;
+ }
+ return svgProduct(p,color);
+}
+
+function uploadProductPicture(event){
+ const file=event.target.files[0];
+ if(!file||!selectedProduct)return;
+
+ if(!file.type.startsWith("image/")){
+  alert("Please select an image.");
+  return;
+ }
+
+ const reader=new FileReader();
+
+ reader.onload=function(e){
+  selectedProduct.customImage=e.target.result;
+
+  try{
+   localStorage.setItem("marketra_image_"+selectedProduct.id,selectedProduct.customImage);
+  }catch(error){
+   alert("Image is too large. Please select a smaller picture.");
+  }
+
+  updateDetail();
+  renderProducts();
+ };
+
+ reader.readAsDataURL(file);
+}
+
+function makeCategories(){
+ document.getElementById("categoryList").innerHTML=categories.map(c=>`<button class="category ${c===activeCategory?'active':''}" onclick="chooseCategory('${c.replace(/'/g,"\\'")}')">${c}</button>`).join("");
+}
+
+function chooseCategory(c){
+ activeCategory=c;
+ document.getElementById("heading").textContent=c==="All"?"All Products":c;
+ makeCategories();
+ renderProducts();
+}
+
+function renderProducts(){
+ let list=products.filter(p=>(activeCategory==="All"||p.cat===activeCategory)&&
+ (p.name+" "+p.cat).toLowerCase().includes(document.getElementById("search").value.toLowerCase()));
+ let sort=+document.getElementById("sort").value;
+ if(sort===1)list.sort((a,b)=>a.price-b.price);
+ if(sort===2)list.sort((a,b)=>b.price-a.price);
+ document.getElementById("productGrid").innerHTML=list.map(p=>`
+ <article class="product" onclick="openDetails(${p.id})">
+  <div class="product-art">${draw(p,p.colours[0])}</div>
+  <div class="product-info">
+   <h3>${p.name}</h3>
+   <div class="price">Rs. ${p.price.toLocaleString("en-PK")}</div>
+   <small>View product details →</small>
+  </div>
+ </article>`).join("")||"<p>No products found.</p>";
+}
+
+function openDetails(id){
+ selectedProduct=products.find(p=>p.id===id);
+ selectedColor=selectedProduct.colours[0];
+ quantity=1;
+ document.getElementById("detailCategory").textContent=selectedProduct.cat;
+ document.getElementById("detailName").textContent=selectedProduct.name;
+ document.getElementById("detailPrice").textContent="Rs. "+selectedProduct.price.toLocaleString("en-PK");
+ document.getElementById("detailVariant").textContent=selectedProduct.variant;
+ updateDetail();
+ document.getElementById("details").classList.add("show");
+}
+
+function updateDetail(){
+ document.getElementById("detailImage").innerHTML=draw(selectedProduct,selectedColor);
+ document.getElementById("selectedColour").textContent="Selected: "+selectedColor;
+ document.getElementById("quantity").textContent=quantity;
+ document.getElementById("colourOptions").innerHTML=selectedProduct.colours.map(c=>
+ `<button class="swatch ${c===selectedColor?'selected':''}" title="${c}" aria-label="${c}" style="background:${colourCodes[c]||'#ddd'}" onclick="selectColor('${c}')"></button>`).join("");
+}
+
+function selectColor(c){selectedColor=c;updateDetail();}
+function changeQty(n){quantity=Math.max(1,Math.min(20,quantity+n));updateDetail();}
+function closeDetails(){document.getElementById("details").classList.remove("show");}
+
+function addToCart(){
+ cart.push({...selectedProduct,colour:selectedColor,qty:quantity});
+ updateCart();
+ closeDetails();
+ alert("Product added to cart!");
+}
+
+function updateCart(){
+ document.getElementById("cartCount").textContent=cart.reduce((s,x)=>s+x.qty,0);
+ document.getElementById("cartItems").innerHTML=cart.length?cart.map((x,i)=>`
+ <div class="cartrow"><div><b>${x.name}</b><br>Colour: ${x.colour} | Qty: ${x.qty}<br>Rs. ${(x.price*x.qty).toLocaleString("en-PK")}</div>
+ <button class="remove" onclick="removeItem(${i})">Remove</button></div>`).join(""):"Your cart is empty.";
+ let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+ document.getElementById("total").textContent="Estimated Total: Rs. "+total.toLocaleString("en-PK");
+}
+
+function removeItem(i){cart.splice(i,1);updateCart();}
+
+function sendOrder(){
+ if(!cart.length)return alert("Your cart is empty.");
+ let name=document.getElementById("customerName").value.trim();
+ let phone=document.getElementById("customerPhone").value.trim();
+ let city=document.getElementById("customerCity").value.trim();
+ let address=document.getElementById("customerAddress").value.trim();
+ let wa=document.getElementById("storeWhatsApp").value.replace(/\D/g,"");
+ if(!name||!phone||!city)return alert("Enter your name, phone number and city.");
+ if(!/^923\d{9}$/.test(wa))return alert("Enter WhatsApp number in 923XXXXXXXXX format.");
+ let list=cart.map((x,i)=>`${i+1}. ${x.name}\nColour: ${x.colour}\nQuantity: ${x.qty}\nEstimated price: Rs. ${x.price*x.qty}`).join("\n\n");
+ let total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+ let msg=`*MARKETRA ORDER*\nName: ${name}\nPhone: ${phone}\nCity: ${city}\nAddress: ${address}\n\n${list}\n\nEstimated total: Rs. ${total}\n\nPlease confirm final price, stock, warranty and delivery charges.`;
+ window.open("https://wa.me/"+wa+"?text="+encodeURIComponent(msg),"_blank");
+}
+
+makeCategories();
+renderProducts();
+</script>
+</body>
+</html><section style="background:white;padding:20px;margin:20px auto;max-width:1200px;border-radius:8px">
+  <h2>Admin – Add New Product</h2>
+  <div class="checkout">
+    <input id="newName" placeholder="Product Name">
+    <select id="newCategory">
+      <option>Wireless Earbuds</option>
+      <option>Power Banks</option>
+      <option>Fast Chargers</option>
+      <option>Charging Cables</option>
+      <option>Smart Watches</option>
+      <option>Bluetooth Speakers</option>
+      <option>Mobile Holders</option>
+      <option>Bluetooth Headphones</option>
+      <option>Ring Lights & Tripods</option>
+      <option>AirPods Ear Clips & Accessories</option>
+      <option>Mini & Miscellaneous Gadgets</option>
+    </select>
+    <input id="newPrice" type="number" placeholder="Price (Rs.)">
+    <input id="newColour" placeholder="Colour (e.g. Black,White)">
+    <input id="newVariant" placeholder="Model / Variant">
+    <input id="newPicture" type="file" accept="image/*">
+  </div>
+  <button class="primary" onclick="addNewProduct()">ADD PRODUCT</button>
+</section>
